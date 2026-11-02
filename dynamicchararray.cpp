@@ -8,7 +8,6 @@ We also have some rules that we need to keep true throughout the program:
 3- If the capacity is 0 our data pointer must be nullptr because we have not allocated any memory.
 */
 #include "dynamicchararray.h"
-   // I am using this to include nothrow which allows new to return nullptr if memory allocation fails instead of throwing an exception.
 using namespace std;
 // The Private helper functions
 bool DynamicCharArray::grow(size_t minCapacity) {
@@ -23,7 +22,7 @@ bool DynamicCharArray::grow(size_t minCapacity) {
         if (newCapacity > ((size_t)-1) / 2) {newCapacity = minCapacity; break;}
         newCapacity *= 2; // I double the capacity to increase the available space.
     }
-    char* newData = new char[newCapacity]; // I am creating a new memory space with the new capacity. I use nothrow so the pointer becomes nullptr if the allocation fails.
+    char* newData = new char[newCapacity]; // I am creating a new memory space with the new capacity.
     if (newData == nullptr) return false; // If memory allocation fails I return false without changing our original array.
     for (size_t i = 0; i < length_; ++i) newData[i] = data[i]; // I am copying all the characters from our old array into the new memory space so we don't lose any data.
     delete[] data; // I am freeing the old memory because we now have a new memory space containing our characters.
@@ -73,9 +72,6 @@ DynamicCharArray& DynamicCharArray::operator=(const DynamicCharArray& other) {//
 }
 
 // Modification Functions
-// I am using this function to make sure our array has enough memory for a certain number of characters.
-bool DynamicCharArray::reserve(size_t newCapacity) {return grow(newCapacity);} // I am calling grow() to increase the capacity if we need more space.
-//If the current capacity is already enough nothing changes.
 // I am using this function to add one character to the end of our array.
 bool DynamicCharArray::pushBack(char c) {
     if (grow(length_ + 1) == false) {return false;} // First make sure we have enough space for one more character.
@@ -113,6 +109,13 @@ bool DynamicCharArray::popBack(char& removed) {
     return true; // I return true because we successfully removed the last character.
 }
 
+bool DynamicCharArray::removeAt(size_t index) {
+    if (index >= length_) {return false;} // I am checking if the index exists. If it is outside the array's length, I return false.
+    for (size_t i = index; i < length_ - 1; i++) {data[i] = data[i + 1];} // I am shifting all the characters after the removed character one position to the left to fill the empty space.
+    length_--; // I am decreasing the length by 1 because we removed one character. The capacity stays the same.
+    return true; // I return true because we successfully removed the character.
+}
+
 bool DynamicCharArray::set(size_t index, char c) {
     if (index >= length_) {return false;} // I am checking if the index is outside our array's current length.
     //If it is we cannot change that position so I return false.
@@ -123,16 +126,13 @@ bool DynamicCharArray::set(size_t index, char c) {
 void DynamicCharArray::clear() {length_ = 0;} // I am setting the length to 0 because we are removing all the characters from our array.
 //I am keeping the allocated memory so we can reuse it later without allocating memory again.
 // Access / information
-bool DynamicCharArray::get(size_t index, char& out) const {
+bool DynamicCharArray::get(size_t index, char& output) const {
     if (index >= length_) {return false;} // I am checking if the requested index is outside our array's current length.
     //If it is there is no character to get so I return false.
-    out = data[index]; // I am getting the character at the requested index and storing it in out. This allows us to access the character without changing the original array.
+    output = data[index]; // I am getting the character at the requested index and storing it in out. This allows us to access the character without changing the original array.
     return true; // I return true because we successfully retrieved the character.
 }
 
-char& DynamicCharArray::operator[](size_t index) {return data[index];} // I am returning the character at the requested index.
-//Since I am returning char& we can also use this function to change the character.
-const char& DynamicCharArray::operator[](size_t index) const {return data[index];} // I am returning the character at the requested index but as const char& meaning we can read it but cannot change it.
 size_t DynamicCharArray::size() const {return length_;} // I am returning the number of characters currently stored in our array.
 size_t DynamicCharArray::capacity() const {return capacity_;} // I am returning the total number of characters our allocated memory can hold.
 bool DynamicCharArray::isEmpty() const {return length_ == 0;} // I am checking if our array has zero characters. If it does I return true; otherwise I return false.

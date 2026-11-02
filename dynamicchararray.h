@@ -90,6 +90,8 @@ public:
     // Before removing it, we store the removed character in the variable 'removed' so we can still access it.
     // It returns false if the array is empty because there is nothing to remove.
 
+    bool removeAt(size_t index); // I am using this function to remove a character from a specific position in our array.
+
     bool set(size_t index, char c); // I am using this function to replace a character at a specific position in our array.
     // The index tells us which character we want to change and the new character replaces the old one.
     // It returns false if the index is outside the current length of the array.
@@ -98,26 +100,11 @@ public:
     // We don't delete the allocated memory or reset the capacity because we might want to reuse the same array later.
     // This saves us from allocating memory again when we start adding new characters.
 
-    bool reserve(size_t newCapacity); // I am using this function to make sure our array has enough memory for a certain number of characters before we start adding them.
-    // If the requested capacity is larger than our current capacity it calls grow() to allocate more memory.
-    // The grow() function doubles the capacity when needed so we don't have to allocate memory every time we add characters.
-    // If the requested capacity is smaller than or equal to the current capacity nothing changes.
-    // It returns false if memory allocation fails.
-
     // Access Functions
-    bool get(size_t index, char& out) const; // I am using this function to get the character stored at a specific position in our array.
+    bool get(size_t index, char& output) const; // I am using this function to get the character stored at a specific position in our array.
     // The index tells us which character we want to access and the function copies that character into the "out" variable.
     // It returns false if the index is invalid so we don't accidentally access a position outside the array.
     // The const at the end means this function will not change anything inside our array.
-
-    char& operator[](size_t index); // I am using this operator to access or modify a character directly using its index just like a normal array.
-    // Unlike get() this operator does not check if the index is valid which makes it faster.
-    // We mainly use it in our searching algorithms when we already know that the index is within the array's limits.
-    // It returns a reference to the actual character so we can also change its value.
-
-    const char& operator[](size_t index) const; // I am using this version when we want to access a character from an array that should not be modified.
-    // It works like the previous operator but returns a const reference meaning we can read the character but cannot change it.
-    // The const at the end also makes sure that the function does not modify the array.
 
     // Information
     size_t size() const; // I am using this function to get the number of characters currently stored in our array.
