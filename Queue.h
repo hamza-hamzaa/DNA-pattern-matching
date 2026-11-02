@@ -26,13 +26,15 @@ class Queue{
         QueueNode* tail;
     public:
         Queue();
-        //both copy constructor and operator overloading to deep copy queues
-        Queue(const Queue& copy);
-        Queue<T>& operator=(const Queue& copy);
+        // copy constructor  to deep copy queues
+        Queue(const Queue& copy);;
         //destructor that frees up memory 
         ~Queue();
+        //checks if Queue is empty
         bool empty();
+        //places new TrieNode pointer at the end of the LL
         void enqueue(TrieNode<T>* d);
+        //returns the top element of a Queue
         TrieNode<T>* top();
         void dequeue();
 
