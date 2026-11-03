@@ -54,6 +54,7 @@ template<class T> struct TrieNode {
         current->seqID = tag;                                   //Tags the last node of the sequence with the index
     }
     
+    ~TrieNode();
 };
 
 #endif
