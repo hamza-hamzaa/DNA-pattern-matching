@@ -1,15 +1,18 @@
-#ifndef AHO-CORASICK_H
-#define AHO-CORASICK_H
+#ifndef AHO_CORASICK_H
+#define AHO_CORASICK_H
 
 #include "Trie.h"
 #include <string>
-const int SIZE = 4;
+#include <iostream>
 template<class T> class AhoCorasick{
 private:
-    TrieNode<T>* root;                      //Initializes an empty trie node
+    TrieNode<T>* root;                      //Initializes the root pointer of the tries
                                             
 
 public:
+
+AhoCorasick(const AhoCorasick&) = delete;               //Stops C++ from auto copying which would make the 
+AhoCorasick& operator=(const AhoCorasick&) = delete;    //destructor delete the root twice, causing a crash
 
 AhoCorasick(){
     root = new TrieNode<T>;                       //Makes sure every instance has their own trie
@@ -36,7 +39,7 @@ void failAndOutLinkage(){                                         //Builds the f
     while(!q.empty()){
         TrieNode<T>* curNode = q.top(); q.dequeue();                 //Takes the next node in the level
 
-        for(int i = 0;i<4;i++){
+        for(int i = 0;i<SIZE;i++){
             if(curNode->children[i] != nullptr){                     //We skip empty nodes, and all previous nodes are already linked
 
                 TrieNode<T>* curChild = curNode->children[i];        //Grabs the value of the child node
@@ -62,12 +65,36 @@ void failAndOutLinkage(){                                         //Builds the f
     }
 }
 
-void search(const std::string sequence){
-    for(char j: sequence){
+void search(const std::string& sequence){               //Function to search our trie for desired patterns
+
+    TrieNode<T>* current = root;                        //Initialize traversal node
+
+    for(int j = 0; j < (int)sequence.length();j++){     //Loops over every character in the string
+
+        int index = current->validateCharToIndex(sequence[j]);          //Checks if the read character is a valid DNA letter
+        if(index == -1)
+        {current = root; continue;}                                     //If character does not continue any of the patterns or is an invalid character like 'N', reset to root
+        while(current != root && current->children[index] == nullptr)   //When at any node with no child for this letter, there are no 
+        current = current->failure;                                     //more possible extensions so it triggers a failure link
+        if(current->children[index] != nullptr)                         //Continues down the trie if the following character starts to match a desired pattern
+            current = current->children[index];
+        if(current->seqID != -1)                                        //If the node is a desired pattern output, output which pattern it is, and where it starts and ends
+            std::cout << "From " << j-current->patternLength + 1 << " to " << j << " " << 
+            sequence.substr(j-current->patternLength + 1, current->patternLength) << std::endl;
+
+        TrieNode<T>* tempo = current->output;                           //Temporary node to output all the embedded patterns found in current node
+
+        while(tempo != nullptr){                                        //Same action but for the embedded patterns, output which pattern it is, and where it starts and ends
+            std::cout << "From " << j-tempo->patternLength + 1 << " to " << j << " " << 
+            sequence.substr(j-tempo->patternLength + 1, tempo->patternLength) << std::endl;
+            tempo = tempo->output;                                      //Loops through all embedded patterns before moving to the next character
+        } 
 
     }
 }
 
-~AhoCorasick();
+~AhoCorasick(){                                                         //Deleting the root causes a cascade effect of children deleting their children
+    delete root;
+}
 };
 #endif
