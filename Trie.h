@@ -15,11 +15,11 @@ template<class T> struct TrieNode {
 
     TrieNode(){                                         //Constructor
         seqID = -1;                                     //There is no sequence to tag yet
-        patternLength = 0;                              //No patterns have been added to the trie
-        for(int i = 0;i<SIZE;i++)                       //Indexes every child node, failure and output link with nullptr for initilization
+        patternLength = 0;                              //No patterns end at this node yet
+        for(int i = 0;i<SIZE;i++)                       //Indexes every child node
             {children[i] = nullptr;
         }
-        failure = nullptr;
+        failure = nullptr;                              //Failure and output link with nullptr for initilization
         output = nullptr;
     }
     int validateCharToIndex(const char ch){             //Used to validate the read character in the sequence 
@@ -54,10 +54,10 @@ template<class T> struct TrieNode {
 
         }
         current->seqID = tag;                                   //Tags the last node of the sequence with the index
-        current->patternLength = (int)sequence.length();
+        current->patternLength = (int)sequence.length();        //Stores the pattern length to use in search function
     }
     
-    ~TrieNode(){                                                //Only deletes the children becuase output and failure only point at nodes in the tree
+    ~TrieNode(){                                                //Only deletes the children because output and failure only point at nodes in the tree
         for(int i=0;i<SIZE;i++)
         delete children[i];
     }

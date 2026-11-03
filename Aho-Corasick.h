@@ -6,7 +6,7 @@
 #include <iostream>
 template<class T> class AhoCorasick{
 private:
-    TrieNode<T>* root;                      //Initializes the root pointer of the tries
+    TrieNode<T>* root;                      //Initializes the root pointer of the trie
                                             
 
 public:
@@ -73,7 +73,7 @@ void search(const std::string& sequence){               //Function to search our
 
         int index = current->validateCharToIndex(sequence[j]);          //Checks if the read character is a valid DNA letter
         if(index == -1)
-        {current = root; continue;}                                     //If character does not continue any of the patterns or is an invalid character like 'N', reset to root
+        {current = root; continue;}                                     //If character is an invalid character like 'N', reset to root
         while(current != root && current->children[index] == nullptr)   //When at any node with no child for this letter, there are no 
         current = current->failure;                                     //more possible extensions so it triggers a failure link
         if(current->children[index] != nullptr)                         //Continues down the trie if the following character starts to match a desired pattern
