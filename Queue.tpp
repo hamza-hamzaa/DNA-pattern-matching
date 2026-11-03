@@ -1,6 +1,6 @@
 //file has a .tpp extension because it is a template class implementation so for the linker 
 //to combine files properly this must use .tpp
-#include "Queue.h"
+#include <Queue.h>
 //all functions need template definition before them 
 template<class T>
 //create a queue and initialise both head and tail to be no pointers
@@ -56,7 +56,7 @@ bool Queue<T>::empty(){
 }
 template<class T>
 //returns value at head since this is the top of the queue
-TrieNode<T>* Queue<T>:: top(){
+TrieNode<T>* Queue<T>:: top() const{
     if(head==nullptr){return nullptr;}
     return head->data;
 }

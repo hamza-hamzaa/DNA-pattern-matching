@@ -27,7 +27,9 @@ class Queue{
     public:
         Queue();
         // copy constructor  to deep copy queues
-        Queue(const Queue& copy);;
+        Queue(const Queue& copy);
+        //dissables copying queue to avoid shallow copying
+        Queue& operator=(const Queue&) = delete;
         //destructor that frees up memory 
         ~Queue();
         //checks if Queue is empty
@@ -35,7 +37,7 @@ class Queue{
         //places new TrieNode pointer at the end of the LL
         void enqueue(TrieNode<T>* d);
         //returns the top element of a Queue
-        TrieNode<T>* top();
+        TrieNode<T>* top() const;
         void dequeue();
 
         
