@@ -15,15 +15,15 @@ For the header file I will be explaining why we use each function.
 #include <cstddef>   // I am using this so I can be able to use size_t. This will help me track how many characters we store and how much memory we have in the array.
 
 class DynamicCharArray {
-private:
+public:
     char*  data;       // I am using this pointer to store the characters in the memory we allocate for the array.
     // This allows us to manage the memory ourselves and add more space when we need it. This is our heap buffer.
     size_t length_;    // I am using this to keep track of how many characters we currently have stored in the array. This helps us know how much of the array we are actually using.
     size_t capacity_;  // I am using this to keep track of how many characters the array can hold with its current memory. This helps us know when we need to allocate more memory to fit more characters.
 
-    static const size_t DEFAULT_CAPACITY = 16; // I am using this to set the default amount of space our array starts with which is 16 characters.
+    const size_t DEFAULT_CAPACITY = 16; // I am using this to set the default amount of space our array starts with which is 16 characters.
     // This means that when we create an empty array without specifying its capacity it will have enough memory to store 16 characters before needing to grow.
-    // The static means this value belongs to the class itself and const means we cannot change its value.
+    // Const means we cannot change its value.
     // We picked 16 as a starting capacity so our array has space for 16 characters before it needs to grow. It is a good starting number before it grows.
 
 
@@ -31,7 +31,6 @@ private:
     // It doubles the current capacity until we have enough room for the characters we need.
     // If we cannot allocate more memory it returns false and keeps the array unchanged.
 
-public:
     // Constructor, destructor, and copying
     DynamicCharArray(); // I am using this constructor to create an empty array with the default capacity of 16 characters.
     // The array starts with length 0 because we haven't stored anything yet.
@@ -115,6 +114,15 @@ public:
 
     bool isEmpty() const; // I am using this function to check if our array is empty or not.
     // It checks if the length is 0 and returns true if there are no characters stored otherwise it returns false.
+
+    char& operator[](size_t index); // I am using this operator to access or modify a character directly using its index, just like a normal array.
+    // Unlike get(), this operator does not check if the index is valid, which makes it faster.
+    // We mainly use it in our searching algorithms when we already know that the index is within the array's limits.
+    // It returns a reference to the actual character, so we can also change its value.
+
+    const char& operator[](size_t index) const; // I am using this version when we want to access a character from an array that should not be modified.
+    // It works like the previous operator, but returns a const reference, meaning we can read the character but cannot change it.
+    // The const at the end also makes sure that the function does not modify the array.
 };
 
 #endif

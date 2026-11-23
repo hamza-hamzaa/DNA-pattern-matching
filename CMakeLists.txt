@@ -9,4 +9,6 @@ add_executable(A5-DNA
     main.cpp
     dynamicchararray.cpp
     dynamicchararray.h
+    bruteforce.h bruteforce.cpp
+    rabinkarp.h rabinkarp.cpp
 )

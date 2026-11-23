@@ -1,5 +1,7 @@
 #include "dynamicchararray.h"
-
+#include "bruteforce.h"
+#include "rabinkarp.h"
+using namespace std;
 int main() {
-    return 0; // I am returning 0 to show that the program finished successfully.
+    return 0;
 }

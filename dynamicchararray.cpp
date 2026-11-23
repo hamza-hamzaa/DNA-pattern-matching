@@ -136,3 +136,7 @@ bool DynamicCharArray::get(size_t index, char& output) const {
 size_t DynamicCharArray::size() const {return length_;} // I am returning the number of characters currently stored in our array.
 size_t DynamicCharArray::capacity() const {return capacity_;} // I am returning the total number of characters our allocated memory can hold.
 bool DynamicCharArray::isEmpty() const {return length_ == 0;} // I am checking if our array has zero characters. If it does I return true; otherwise I return false.
+
+char& DynamicCharArray::operator[](size_t index) {return data[index];} // I am returning the character at the requested index.
+//Since I am returning char&, we can also use this function to change the character.
+const char& DynamicCharArray::operator[](size_t index) const {return data[index];} // I am returning the character at the requested index, but as const char&, meaning we can read it but cannot change it.
