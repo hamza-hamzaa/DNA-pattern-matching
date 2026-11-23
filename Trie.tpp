@@ -1,0 +1,61 @@
+//Function bodies for TrieNode<T>, included at the bottom of Trie.h (do not compile this file on its own)
+#ifndef TRIE_TPP
+#define TRIE_TPP
+#include "Trie.h"
+
+template<class T>
+TrieNode<T>::TrieNode(){                                         //Constructor
+    seqID = -1;                                     //There is no sequence to tag yet
+    patternLength = 0;                              //No patterns end at this node yet
+    for(int i = 0;i<SIZE;i++)                       //Indexes every child node
+        {children[i] = nullptr;
+    }
+    failure = nullptr;                              //Failure and output link with nullptr for initilization
+    output = nullptr;
+}
+
+template<class T>
+int TrieNode<T>::validateCharToIndex(const char ch){             //Used to validate the read character in the sequence
+                                                    //and help calculate the state of the child
+    switch(ch){
+    case 'A': return 0;
+    case 'T': return 1;
+    case 'C': return 2;
+    case 'G': return 3;
+    default: return -1;
+    }
+
+}
+
+template<class T>
+void TrieNode<T>::insert(TrieNode* root, const std::string& sequence, int tag){  //Function to insert a new sequence into the trie
+    //start at root node
+    if(sequence == "") return;                              //Edge-case where sequence is empty
+    TrieNode* current = root;
+
+    for(char letter: sequence){                             //Iterate through the letter in the sequence
+
+        int num = current->validateCharToIndex(letter);     //Validating the characters in the sequence before inserting them into the trie
+        if(num == -1) return;                               //If there is an unknown or typo in the sequence, we stop writing to the trie
+
+        if(current->children[num] == nullptr){              //Create a new child node if one doesnt exist
+                                                            //If node already exists, continue
+            TrieNode* newChild = new TrieNode();
+
+            current->children[num] = newChild;              //Keeping the reference of the new child node to navigate to it
+        }
+
+        current = current->children[num];                   //Move to the new child node
+
+    }
+    current->seqID = tag;                                   //Tags the last node of the sequence with the index
+    current->patternLength = (int)sequence.length();        //Stores the pattern length to use in search function
+}
+
+template<class T>
+TrieNode<T>::~TrieNode(){                                                //Only deletes the children because output and failure only point at nodes in the tree
+    for(int i=0;i<SIZE;i++)
+    delete children[i];
+}
+
+#endif
