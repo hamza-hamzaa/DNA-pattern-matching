@@ -1,15 +1,8 @@
+#include "SuffixArray.h"
+
 #include <iostream>
 #include <string>
-
 using namespace std;
-
-// we use suffixTuple to compare the prefixes of the suffixes
-// to avoid comparing character by character to save time
-struct SuffixTuple {
-    int original_index; // stores original index of a suffix
-    int left_rank;      // stores first half of prefix
-    int right_rank;     // used in conflicts when elements have equal left ranks
-};
 
 // We assign the DNA characters to integers. $ represents end of string
 int getBaseRank(char character) { 
@@ -89,15 +82,11 @@ void mergeSort(SuffixTuple* array, int length)
     delete[] rightArray;
 }
 
-
-int main() {
-    string word = "ABA$";
+SuffixTuple* suffixArrayBuilder(string word)
+{
     int length = word.length();
-    
-   
     SuffixTuple* tuples = new SuffixTuple[length];
-    
-   
+
     // For length 1, we only look at the very first letter of each suffix 
     //to get the left rank.
     for (int i = 0; i < length; i++) {
@@ -159,24 +148,78 @@ int main() {
                 tuples[i].right_rank = -1; 
             }
         }
-        
-     
-        // Sort the tuples again based on their updated L-step leapfrog ranks.
+
         mergeSort(tuples, length);
     }
-    
-
-    // every suffix has a completely unique rank and is perfectly sorted.
-    cout << "Sorted Tuples (Original Index | Left Rank | Right Rank):" << endl;
-    for (int i = 0; i < length; i++) {
-        cout << "Index: " << tuples[i].original_index 
-             << " | Left: " << tuples[i].left_rank 
-             << " | Right: " << tuples[i].right_rank << endl;
-    }
-  
 
     delete[] new_ranks;
-    delete[] tuples;
-    
-    return 0;
+    return tuples;
 }
+
+// Compares 'pattern' against the suffix of 'word' starting at 'suffixStart'.
+int compareSuffix(string word, int suffixStart, string pattern) {
+    int wordLen = word.length();
+    int patLen = pattern.length();
+
+    for (int i = 0; i < patLen; i++) {
+        if (suffixStart + i >= wordLen) return -1; // Suffix is shorter than pattern
+        if (word[suffixStart + i] < pattern[i]) return -1;
+        if (word[suffixStart + i] > pattern[i]) return 1;
+    }
+    return 0; // Exact prefix match
+}
+
+// Uses two binary searches on the suffix array to count occurrences of 'pattern'.
+int countPattern(string word, SuffixTuple* tuples, int length, string pattern) {
+    int first = -1;
+    int last = -1;
+
+    // Binary Search 1: Find the FIRST matching suffix
+    int low = 0, high = length - 1;
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+        int cmp = compareSuffix(word, tuples[mid].original_index, pattern);
+
+        if (cmp == 0) {
+            first = mid;
+            high = mid - 1; // Keep searching left for an earlier match
+        } else if (cmp < 0) {
+            low = mid + 1;
+        } else {
+            high = mid - 1;
+        }
+    }
+
+    if (first == -1) return 0; // Pattern not found
+
+    // Binary Search 2: Find the LAST matching suffix
+    low = first;
+    high = length - 1;
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+        int cmp = compareSuffix(word, tuples[mid].original_index, pattern);
+
+        if (cmp == 0) {
+            last = mid;
+            low = mid + 1; // Keep searching right for a later match
+        } else if (cmp < 0) {
+            low = mid + 1;
+        } else {
+            high = mid - 1;
+        }
+    }
+
+    return (last - first) + 1;
+}
+
+
+
+
+
+
+
+
+
+
+
+
