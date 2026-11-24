@@ -6,6 +6,7 @@
 #include"bruteforce.h"
 #include"rabinkarp.h"
 #include"SuffixArray.h"
+#include"BMH.cpp"
 using namespace std;
 
 
@@ -41,33 +42,6 @@ bool isValidDNA(const string& dna) {
 }
 
 
-int expectedCount(const string& dna, const string& pattern) {
-    if (pattern.empty() || pattern.size() > dna.size())
-        return 0;
-
-    int count = 0;
-
-    for (size_t i = 0; i + pattern.size() <= dna.size(); i++) {
-        bool match = true;
-
-        for (size_t j = 0; j < pattern.size(); j++) {
-            if (dna[i + j] != pattern[j]) {
-                match = false;
-                break;
-            }
-        }
-
-        if (match)
-            count++;
-    }
-
-    return count;
-}
-
-
-
-
-
 
 //helper function that easily returns count of the Aho corasick algorithm so its easier to call many times
 int Aho_CorasickCount(const string& DNA,string patterns[],int size){
@@ -77,7 +51,6 @@ int Aho_CorasickCount(const string& DNA,string patterns[],int size){
     return a;
 }   
 
-int BMH( const string& a, string pattern){}
 
 //helper function that easily returns count of the suffix array algorithm so its easier to call many times
 int suffixArrayCount( const string& dna, const string& pattern){
@@ -163,7 +136,7 @@ int main() {
     for(int i=0;i<patternNumber;i++){  
         DNAfile.clear();
         DNAfile.seekg(0);                     
-        BMHCounts+=BMH(dna,patterns[i]);
+        BMHCounts+=searchBMH(dna,patterns[i]);
     }                                    
     end = chrono::steady_clock::now();                                                 
     double BMHElapsed = chrono::duration<double, milli>(end - start).count();   
@@ -182,12 +155,7 @@ int main() {
 
 
 
-    //using the expected count function it determines count but since
-    //the function can only get 1 pattern at a time it uses a for loop 
-    int total=0;
-    for(int i=0;i<patternNumber;i++){
-        total+=expectedCount(dna,patterns[i]);
-    }
+    
 
 
 
@@ -200,7 +168,7 @@ int main() {
     cout<<"BOORE MOORE HORSPOOL:           "<< BMHCounts<<"                  "<<BMHElapsed<<endl;  
     cout<<"SUFFIX ARRAY:                   "<< suffixArrayCounts<<"                  "<<suffixArrayElapsed<<endl;
     
-    cout<<endl<<endl<<"EXPECTED:"<<total;
+    cout<<endl<<endl<<"EXPECTED:"<<bruteForceCounts;
     delete [] patterns;
     return 0;
 }
